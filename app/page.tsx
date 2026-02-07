@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useSession } from '@/lib/use-session';
 import {
   GraduationCap,
   Calendar,
@@ -104,6 +105,8 @@ const images = [
 ];
 
 export default function HomePage() {
+  const { user } = useSession();
+
   return (
     <main className="min-h-screen bg-[#0a0a0c] text-white selection:bg-brand-primary/30 overflow-x-hidden">
       {/* Hero */}
@@ -143,19 +146,31 @@ export default function HomePage() {
             </motion.p>
 
             <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                href="/auth/signup"
-                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-brand-primary text-white font-bold text-lg flex items-center justify-center gap-2 hover:bg-brand-secondary transition-all hover:scale-[1.02]"
-              >
-                Get Started Free
-                <ChevronRight className="w-5 h-5" />
-              </Link>
-              <Link
-                href="/auth/login"
-                className="w-full sm:w-auto px-8 py-4 rounded-xl border border-white/20 text-white font-semibold hover:bg-white/5 transition-all"
-              >
-                Sign In
-              </Link>
+              {user ? (
+                <Link
+                  href="/learn"
+                  className="w-full sm:w-auto px-8 py-4 rounded-xl bg-brand-primary text-white font-bold text-lg flex items-center justify-center gap-2 hover:bg-brand-secondary transition-all hover:scale-[1.02]"
+                >
+                  Go to Learn
+                  <ChevronRight className="w-5 h-5" />
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/auth/signup"
+                    className="w-full sm:w-auto px-8 py-4 rounded-xl bg-brand-primary text-white font-bold text-lg flex items-center justify-center gap-2 hover:bg-brand-secondary transition-all hover:scale-[1.02]"
+                  >
+                    Get Started Free
+                    <ChevronRight className="w-5 h-5" />
+                  </Link>
+                  <Link
+                    href="/auth/login"
+                    className="w-full sm:w-auto px-8 py-4 rounded-xl border border-white/20 text-white font-semibold hover:bg-white/5 transition-all"
+                  >
+                    Sign In
+                  </Link>
+                </>
+              )}
             </motion.div>
           </motion.div>
         </div>
@@ -335,17 +350,19 @@ export default function HomePage() {
               Join thousands of learners. Start free—no credit card required.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                href="/auth/signup"
-                className="px-8 py-4 rounded-xl bg-brand-primary text-white font-bold hover:bg-brand-secondary transition-all"
-              >
-                Create Free Account
-              </Link>
+              {!user && (
+                <Link
+                  href="/auth/signup"
+                  className="px-8 py-4 rounded-xl bg-brand-primary text-white font-bold hover:bg-brand-secondary transition-all"
+                >
+                  Create Free Account
+                </Link>
+              )}
               <Link
                 href="/learn"
                 className="px-8 py-4 rounded-xl border border-white/20 hover:bg-white/5 transition-all"
               >
-                Try Learn (No Account)
+                {user ? 'Go to Learn' : 'Try Learn (No Account)'}
               </Link>
             </div>
           </div>

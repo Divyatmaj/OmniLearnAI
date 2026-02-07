@@ -32,7 +32,7 @@ export default function LoginPage() {
       if (typeof window !== 'undefined') {
         localStorage.setItem('omnilearn-user', JSON.stringify({ id: data.id, email: data.email, name: data.name }));
       }
-      window.location.href = '/';
+      window.location.href = '/learn';
     } catch {
       setError('Network error.');
     } finally {
