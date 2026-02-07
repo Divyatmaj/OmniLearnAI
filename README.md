@@ -1,4 +1,4 @@
----
+
 # 🧠 OmniLearnAI
 
 **OmniLearnAI** is an advanced, AI-powered multimodal learning platform — built as a submission for **Codeversity, IIT Gandhinagar**. It transforms any topic into a complete, interactive educational experience by generating explanations, diagrams, audio lessons, quizzes, and worksheets tailored to the learner’s level and needs.
@@ -172,5 +172,3 @@ Distributed under the MIT License.
 ## 📞 Contact
 
 Developed for **Codeversity, IIT Gandhinagar** — feel free to raise issues or contact maintainers for support or collaboration.
-
----
