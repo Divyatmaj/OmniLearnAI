@@ -1,0 +1,94 @@
+// OmniLearnAI - Prisma schema
+// New models only; do not modify existing tables.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// --- Auth & Admin ---
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String?
+  passwordHash String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  sessions     Session[]
+  studyPlans   StudyPlan[]
+  worksheets   Worksheet[]
+  progress     Progress?
+  weaknessReports WeaknessReport[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// --- Study Planner ---
+model StudyPlan {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  examDate  DateTime
+  dailyPlan String   // JSON: array of { day, title, tasks[], completed }
+  progress  Int      @default(0) // 0-100
+  updatedAt DateTime @updatedAt
+}
+
+// --- Worksheet Generator ---
+model Worksheet {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic      String
+  difficulty String
+  content    String   @default("{}") // JSON: title, explanation, solvedExamples, practiceQuestions, challengeQuestions
+  pdfUrl     String?
+  createdAt  DateTime @default(now())
+}
+
+// --- Progress Dashboard ---
+// Note: SQLite does not support scalar lists (String[]); we store JSON in String fields.
+model Progress {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  xpPoints            Int      @default(0)
+  badges              String   @default("[]") // JSON array of badge names
+  topicsStudied       String   @default("[]") // JSON array of topic strings
+  worksheetsGenerated Int      @default(0)
+  studyPlansCreated   Int      @default(0)
+  weaknesses          String   @default("[]") // JSON array (weakTopics), score < 60%
+  analytics           String   @default("{}") // JSON: weekly/daily activity
+  updatedAt           DateTime @updatedAt
+}
+
+// --- Weakness Detector ---
+model WeaknessReport {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  inputFileUrl   String?
+  summary        String?
+  topicsDetected String   @default("[]") // JSON array
+  createdAt      DateTime @default(now())
+}
+
+// --- Contact ---
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
